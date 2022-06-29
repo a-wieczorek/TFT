@@ -6,9 +6,9 @@ import pickle
 
 
 @dataclass
-class Data:
+class Champion:
     name: str
-    classes: list
+    traits: list
     price: int
 
 
@@ -22,14 +22,14 @@ html = urllib.request.urlopen(req).read()
 soup = BeautifulSoup(html, "html.parser")
 for a in soup.find_all('a', href=True):
     if a['href'].startswith('/pl_pl/tft/champions/'):
-        classes = []
+        traits = []
         price = int(a.select('div.m-s5xdrg')[0].contents[1])
         name = a['href'][len('/pl_pl/tft/champions/'):]
         for i in a.select('div.m-8s0dym'):
-            classes.append(str(i.nextSibling))
-        data.append(Data(
+            traits.append(str(i.nextSibling))
+        data.append(Champion(
             name=str(name),
-            classes=classes,
+            traits=traits,
             price=int(price),
         ))
         x = a.select('div.m-1lk7whh')[0]['style']

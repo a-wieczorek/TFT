@@ -29,7 +29,7 @@ The code is responsible for editing images downloaded in *Scrap.py* and saving t
 ![obraz](https://user-images.githubusercontent.com/102622810/177202845-69ac835b-8bec-42e5-9138-81c56a5a4e2d.png)
 
 
-#API.py
+# API.py
 The code utilises data prepared in *Scrap.py* and *imgEdt.py* in 2 endpoints
 
 

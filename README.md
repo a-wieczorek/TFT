@@ -40,7 +40,7 @@ E.g. *localhost:8000/?traits=warrior,shimmerscale,*  ->
 ```JSON
 {"champions": [
   { 
-  "name": "aatrox", 
+  "name": "aatrox",
   "traits": ["Shimmerscale", "Warrior"], 
   "price": 1, 
   "iconurl": "https://raw.githubusercontent.com/a-wieczorek/TFT/main/IconsEdited/aatrox.jpg"
@@ -56,4 +56,12 @@ E.g. *localhost:8000/?traits=warrior,shimmerscale,*  ->
 ```
 
 
+### *localhost:8000/traitlists*
+Returns *JSON* containing data about existing traits in English and in Polish language sorted alphabetically.
+```JSON
+{
+"traitListEN": ["Assassin", "Astral", "Bard", ...], 
+"traitListPL": [["Bard", "Bard"], ["Festynowy", "Revel"], ["Gwiezdny", "Astral"], ...]
+}
+```
 

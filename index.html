@@ -63,9 +63,7 @@
         let isClicked = {}
 
         window.onload=()=>{
-            console.log('dupa')
             grabData((x) => {
-
                 if(x === null){
                     return
                 }
@@ -80,7 +78,7 @@
         };
 
         function grabData(callback) {
-            getJSON('http://localhost:1000/traitlists', function(err, json) {
+            getJSON('http://localhost:8000/traitlists', function(err, json) { /*local i compose*/
                 let x = null
                 if (err !== null) {
                     alert('Something went wrong: ' + err);
@@ -192,7 +190,7 @@
                     activeElems = activeElems + elem.id + ","
                 }
             })
-            let url = 'http://localhost:1000/?traits=' + activeElems;
+            let url = 'http://localhost:8000/?traits=' + activeElems; /*local i compose*/
             clearChildren('pics');
             if (activeElems === "") {
                 elems.forEach(elem => {

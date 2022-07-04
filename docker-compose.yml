@@ -1,12 +1,14 @@
 version: "3.9"
 services:
   web:
-    build: .
+    build:
+      context: .
+      dockerfile: 'Dockerfile.web'
     ports:
       - "8000:8000"
   nginx:
     build:
       context: .
-      dockerfile: 'Dockerfile_2'
+      dockerfile: 'Dockerfile.nginx'
     ports:
       - "3000:80"

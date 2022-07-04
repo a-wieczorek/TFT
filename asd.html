@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TFT</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+    <style>
+        html, body{
+            height: 94.9%;
+        }
+        body{
+            background-color: #e6e6e6;
+            font-family: "Lucida Console", "Courier New", monospace;
+            color: whitesmoke;
+        }
+        #boksik{
+            width: 70%;
+            height: auto;
+            margin: 5vh auto;
+            background-color: #474554;
+            text-align: center;
+            border-radius: 10px;
+            min-width: 500px;
+        }
+        h1{
+            margin-top: 20px;
+        }
+        #traitcols{
+            column-count: 4;
+            column-rule: solid 1px #686868;
+        }
+        button {
+            background-color: Transparent;
+            background-repeat:no-repeat;
+            border: none;
+            cursor:pointer;
+            overflow: hidden;
+            outline:none;
+            color:white;
+            }
+        .column {
+            width: 25%;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .row{
+            margin: 20px 10px;
+        }
+        .spacing{
+            padding-bottom: 20px;
+        }
+
+    </style>
+    <script>
+    var availableTraits = new Set()
+        let buttonsElems = document.getElementsByName('button')
+        let allTraitsEN = []
+        let allTraitsPL = []
+        let isClicked = {}
+
+        window.onload=()=>{
+            grabData((x) => {
+                if(x === null){
+                    return
+                }
+                allTraitsEN = x[0]
+                allTraitsPL = x[1]
+                refreshAvailableTraits();
+                allTraitsEN.forEach(trait => {
+                    isClicked[trait] = 0
+                })
+                console.log(allTraitsPL)
+                generateButtons();
+            })
+
+        };
+
+        function grabData(callback) {
+            getJSON('http://localhost:8000/traitlists', function(err, json) {
+                let x = null
+                if (err !== null) {
+                    alert('Something went wrong: ' + err);
+                } else {
+                    x = [json.traitListEN, json.traitListPL]
+                }
+                callback(x)
+            })
+        }
+
+        var getJSON = function(url, callback) {
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', url, true);
+            xhr.responseType = 'json';
+            xhr.onload = function() {
+              var status = xhr.status;
+              if (status === 200) {
+                callback(null, xhr.response);
+              } else {
+                callback(status, xhr.response);
+              }
+            };
+            xhr.send();
+        };
+
+        function refreshAvailableTraits(){
+            availableTraits = new Set(allTraitsEN)
+        };
+
+        function clearChildren(id) {
+            const list = document.getElementById(id);
+            while (list.hasChildNodes()) {
+                list.removeChild(list.firstChild);
+            }
+        };
+
+        function createRows(data) {
+            const picsElem = document.getElementById('pics');
+            for (let i = 0; i<data.champions.length; i++){
+                if(i!==0 && i % 4 === 0){
+                    const spacer = document.createElement("div");
+                    spacer.setAttribute('class', 'spacing');
+                    picsElem.appendChild(spacer);
+                }
+                const image = document.createElement("img");
+                image.setAttribute('class', 'column');
+                image.setAttribute('src', data.champions[i].iconurl);
+                picsElem.appendChild(image)
+            }
+        }
+
+        function updateAvailableTraits(data) {
+            let possibleTraits = [];
+            data.champions.forEach(champion => {
+                let traits = []
+                champion.traits.forEach(trait =>{
+                    traits.push(trait)
+                })
+                possibleTraits = possibleTraits.concat(traits)
+            })
+            availableTraits = new Set(possibleTraits);
+            colorButtons()
+        }
+
+        function colorButtons() {
+            allTraitsEN.forEach(trait => {
+                var elem = document.getElementById(trait)
+                if (isClicked[trait] === 1) {
+                    elem.setAttribute('style', 'color:red')
+                } else if (availableTraits.has(elem.id)) {
+                    elem.setAttribute('style', 'color:white')
+                } else {
+                    elem.setAttribute('style', 'color:black')
+                }
+            })
+        }
+
+        function changeLanguage() {
+            let x = document.getElementById('lang')
+            if (x.value ==='ENG'){
+                x.value = 'PL'
+                x.textContent = 'Swap to ENG'
+                document.getElementById('h1').textContent = 'Wybierz cechy'
+
+            }else{
+                x.value = 'ENG'
+                x.textContent = 'Zmień język na Polski'
+                document.getElementById('h1').textContent = 'Choose your traits'
+            }
+            generateButtons()
+            colorButtons()
+        }
+
+
+        function swap() {
+            if (!availableTraits.has(this.id)) {
+                return
+            }
+            if (isClicked[this.id] === 1) {
+                isClicked[this.id] = 0
+            } else {
+                isClicked[this.id] = 1
+            }
+
+            let elems = document.getElementsByName('button');
+            let activeElems = '';
+            elems.forEach(elem => {
+                if(isClicked[elem.id] ===1){
+                    activeElems = activeElems + elem.id + ","
+                }
+            })
+            /*for (let i = 0; i < elems.length; i++) {
+                if (isClicked[elems[i].id] === "1") {
+                    activeElems = activeElems + elems[i].id + ","
+                }
+            }*/
+            let url = 'http://localhost:8000/?traits=' + activeElems;
+            clearChildren('pics');
+            if (activeElems === "") {
+                elems.forEach(elem => {
+                    elem.setAttribute('style', 'color:white');
+                })
+                refreshAvailableTraits();
+                return;
+            }
+            getJSON(url, function (err, data) {
+                if (err !== null) {
+                    alert('Something went wrong: ' + err);
+                } else {
+                    updateAvailableTraits(data)
+                    createRows(data)
+                }
+            })
+        }
+
+        function generateButtons(){
+            clearChildren('traitcols')
+            const parentElem = document.getElementById('traitcols');
+            if(document.getElementById('lang').value ==="ENG"){
+                allTraitsEN.forEach(trait =>{
+                    const butElem = document.createElement("button");
+                    butElem.name ='button';
+                    butElem.setAttribute('id',trait);
+                    butElem.textContent = trait;
+                    butElem.onclick = swap
+                    parentElem.appendChild(butElem);
+                    parentElem.appendChild(document.createElement("br"));
+                })
+            }else{
+                allTraitsPL.forEach(trait =>{
+                    const butElem = document.createElement("button");
+                    butElem.name ='button';
+                    butElem.setAttribute('id',trait[1]);
+                    butElem.textContent = trait[0];
+                    butElem.onclick = swap
+                    parentElem.appendChild(butElem);
+                    parentElem.appendChild(document.createElement("br"));
+                })
+            }
+            /*document.getElementsByName('button').forEach(elem=>{
+                elem.onclick = swap
+            })*/
+        }
+
+/*
+            butElem.setAttribute('name', 'button');
+            butElem.setAttribute('value', '0');
+            butElem.setAttribute('onclick', 'swap(this)');
+            if(document.getElementById('lang').value ==="ENG"){
+                for(let i = 0; i<allTraitsEN.length;i++ ){
+                    butElem.setAttribute('id',allTraitsEN[i]);
+                    butElem.textContent = allTraitsEN[i];
+                    parentElem.appendChild(butElem);
+                }
+                allTraitsEN.forEach(trait =>{
+                    butElem.setAttribute('id',trait);
+                    butElem.textContent = trait;
+                    parentElem.appendChild(butElem);
+                })
+            }else{
+                allTraitsPL.forEach(trait =>{
+                    butElem.setAttribute('id',trait[1]);
+                    butElem.textContent = trait[0];
+                    parentElem.appendChild(butElem);
+                })
+            }
+        }*/
+    </script>
+</head>
+<body>
+<button id="lang" value="ENG" onclick="changeLanguage()">Swap to PL</button>
+    <div id="boksik" class="border border-dark">
+        <h1 id="h1">Choose your traits</h1>
+        <hr>
+        <p id="traitcols">
+
+        <!--
+        <button name='button' value='0' id="Shimmerscale" onclick="swap(this)">Shimmerscale</button><br/>
+        <button name='button' value='0' id="Warrior" onclick="swap(this)">Warrior</button><br/>
+        <button name='button' value='0' id="Jade" onclick="swap(this)">Jade</button><br/>
+        <button name='button' value='0' id="Evoker" onclick="swap(this)">Evoker</button><br/>
+        <button name='button' value='0' id="Legend" onclick="swap(this)">Legend</button><br/>
+        <button name='button' value='0' id="Tempest" onclick="swap(this)">Tempest</button><br/>
+        <button name='button' value='0' id="Dragon" onclick="swap(this)">Dragon</button><br/>
+        <button name='button' value='0' id="Swiftshot" onclick="swap(this)">Swiftshot</button><br/>
+        <button name='button' value='0' id="Astral" onclick="swap(this)">Astral</button><br/>
+        <button name='button' value='0' id="Dragonmancer" onclick="swap(this)">Dragonmancer</button><br/>
+        <button name='button' value='0' id="Mage" onclick="swap(this)">Mage</button><br/>
+        <button name='button' value='0' id="Mirage" onclick="swap(this)">Mirage</button><br/>
+        <button name='button' value='0' id="Revel" onclick="swap(this)">Revel</button><br/>
+        <button name='button' value='0' id="Bruiser" onclick="swap(this)">Bruiser</button><br/>
+        <button name='button' value='0' id="Guild" onclick="swap(this)">Guild</button><br/>
+        <button name='button' value='0' id="Mystic" onclick="swap(this)">Mystic</button><br/>
+        <button name='button' value='0' id="Bard" onclick="swap(this)">Bard</button><br/>
+        <button name='button' value='0' id="Scalescorn" onclick="swap(this)">Scalescorn</button><br/>
+        <button name='button' value='0' id="Guardian" onclick="swap(this)">Guardian</button><br/>
+        <button name='button' value='0' id="Cannoneer" onclick="swap(this)">Cannoneer</button><br/>
+        <button name='button' value='0' id="Assassin" onclick="swap(this)">Assassin</button><br/>
+        <button name='button' value='0' id="Whispers" onclick="swap(this)">Whispers</button><br/>
+        <button name='button' value='0' id="Shapeshifter" onclick="swap(this)">Shapeshifter</button><br/>
+        <button name='button' value='0' id="Ragewing" onclick="swap(this)">Ragewing</button><br/>
+        <button name='button' value='0' id="Cavalier" onclick="swap(this)">Cavalier</button><br/>
+        <button name='button' value='0' id="Trainer" onclick="swap(this)">Trainer</button><br/>
+        <button name='button' value='0' id="Starcaller" onclick="swap(this)">Starcaller</button><br/>
+        <button name='button' value='0' id="Spellthief" onclick="swap(this)">Spellthief</button><br/>
+        -->
+        </p>
+        <hr>
+        <div id="pics" class="row"></div>
+    </div>
+</body>
+</html>

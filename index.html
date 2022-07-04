@@ -50,17 +50,22 @@
         .spacing{
             padding-bottom: 20px;
         }
+        .lang{
+            text-shadow: 0 0 5px black;
+        }
+
 
     </style>
     <script>
-    var availableTraits = new Set()
-        let buttonsElems = document.getElementsByName('button')
+        var availableTraits = new Set()
         let allTraitsEN = []
         let allTraitsPL = []
         let isClicked = {}
 
         window.onload=()=>{
+            console.log('dupa')
             grabData((x) => {
+
                 if(x === null){
                     return
                 }
@@ -70,14 +75,12 @@
                 allTraitsEN.forEach(trait => {
                     isClicked[trait] = 0
                 })
-                console.log(allTraitsPL)
                 generateButtons();
             })
-
         };
 
         function grabData(callback) {
-            getJSON('http://localhost:8000/traitlists', function(err, json) {
+            getJSON('http://localhost:1000/traitlists', function(err, json) {
                 let x = null
                 if (err !== null) {
                     alert('Something went wrong: ' + err);
@@ -159,12 +162,12 @@
             let x = document.getElementById('lang')
             if (x.value ==='ENG'){
                 x.value = 'PL'
-                x.textContent = 'Swap to ENG'
+                x.textContent = 'Swap to english'
                 document.getElementById('h1').textContent = 'Wybierz cechy'
 
             }else{
                 x.value = 'ENG'
-                x.textContent = 'Zmień język na Polski'
+                x.textContent = 'Zmień język na polski'
                 document.getElementById('h1').textContent = 'Choose your traits'
             }
             generateButtons()
@@ -189,12 +192,7 @@
                     activeElems = activeElems + elem.id + ","
                 }
             })
-            /*for (let i = 0; i < elems.length; i++) {
-                if (isClicked[elems[i].id] === "1") {
-                    activeElems = activeElems + elems[i].id + ","
-                }
-            }*/
-            let url = 'http://localhost:8000/?traits=' + activeElems;
+            let url = 'http://localhost:1000/?traits=' + activeElems;
             clearChildren('pics');
             if (activeElems === "") {
                 elems.forEach(elem => {
@@ -237,74 +235,16 @@
                     parentElem.appendChild(document.createElement("br"));
                 })
             }
-            /*document.getElementsByName('button').forEach(elem=>{
-                elem.onclick = swap
-            })*/
         }
 
-/*
-            butElem.setAttribute('name', 'button');
-            butElem.setAttribute('value', '0');
-            butElem.setAttribute('onclick', 'swap(this)');
-            if(document.getElementById('lang').value ==="ENG"){
-                for(let i = 0; i<allTraitsEN.length;i++ ){
-                    butElem.setAttribute('id',allTraitsEN[i]);
-                    butElem.textContent = allTraitsEN[i];
-                    parentElem.appendChild(butElem);
-                }
-                allTraitsEN.forEach(trait =>{
-                    butElem.setAttribute('id',trait);
-                    butElem.textContent = trait;
-                    parentElem.appendChild(butElem);
-                })
-            }else{
-                allTraitsPL.forEach(trait =>{
-                    butElem.setAttribute('id',trait[1]);
-                    butElem.textContent = trait[0];
-                    parentElem.appendChild(butElem);
-                })
-            }
-        }*/
     </script>
 </head>
 <body>
-<button id="lang" value="ENG" onclick="changeLanguage()">Swap to PL</button>
+<button class="lang" id="lang" value="ENG" onclick="changeLanguage()">Zmień język na polski</button>
     <div id="boksik" class="border border-dark">
         <h1 id="h1">Choose your traits</h1>
         <hr>
-        <p id="traitcols">
-
-        <!--
-        <button name='button' value='0' id="Shimmerscale" onclick="swap(this)">Shimmerscale</button><br/>
-        <button name='button' value='0' id="Warrior" onclick="swap(this)">Warrior</button><br/>
-        <button name='button' value='0' id="Jade" onclick="swap(this)">Jade</button><br/>
-        <button name='button' value='0' id="Evoker" onclick="swap(this)">Evoker</button><br/>
-        <button name='button' value='0' id="Legend" onclick="swap(this)">Legend</button><br/>
-        <button name='button' value='0' id="Tempest" onclick="swap(this)">Tempest</button><br/>
-        <button name='button' value='0' id="Dragon" onclick="swap(this)">Dragon</button><br/>
-        <button name='button' value='0' id="Swiftshot" onclick="swap(this)">Swiftshot</button><br/>
-        <button name='button' value='0' id="Astral" onclick="swap(this)">Astral</button><br/>
-        <button name='button' value='0' id="Dragonmancer" onclick="swap(this)">Dragonmancer</button><br/>
-        <button name='button' value='0' id="Mage" onclick="swap(this)">Mage</button><br/>
-        <button name='button' value='0' id="Mirage" onclick="swap(this)">Mirage</button><br/>
-        <button name='button' value='0' id="Revel" onclick="swap(this)">Revel</button><br/>
-        <button name='button' value='0' id="Bruiser" onclick="swap(this)">Bruiser</button><br/>
-        <button name='button' value='0' id="Guild" onclick="swap(this)">Guild</button><br/>
-        <button name='button' value='0' id="Mystic" onclick="swap(this)">Mystic</button><br/>
-        <button name='button' value='0' id="Bard" onclick="swap(this)">Bard</button><br/>
-        <button name='button' value='0' id="Scalescorn" onclick="swap(this)">Scalescorn</button><br/>
-        <button name='button' value='0' id="Guardian" onclick="swap(this)">Guardian</button><br/>
-        <button name='button' value='0' id="Cannoneer" onclick="swap(this)">Cannoneer</button><br/>
-        <button name='button' value='0' id="Assassin" onclick="swap(this)">Assassin</button><br/>
-        <button name='button' value='0' id="Whispers" onclick="swap(this)">Whispers</button><br/>
-        <button name='button' value='0' id="Shapeshifter" onclick="swap(this)">Shapeshifter</button><br/>
-        <button name='button' value='0' id="Ragewing" onclick="swap(this)">Ragewing</button><br/>
-        <button name='button' value='0' id="Cavalier" onclick="swap(this)">Cavalier</button><br/>
-        <button name='button' value='0' id="Trainer" onclick="swap(this)">Trainer</button><br/>
-        <button name='button' value='0' id="Starcaller" onclick="swap(this)">Starcaller</button><br/>
-        <button name='button' value='0' id="Spellthief" onclick="swap(this)">Spellthief</button><br/>
-        -->
-        </p>
+        <p id="traitcols"></p>
         <hr>
         <div id="pics" class="row"></div>
     </div>

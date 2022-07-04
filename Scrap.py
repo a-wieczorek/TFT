@@ -1,12 +1,13 @@
+import json
 import urllib
 from dataclasses import dataclass
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
 import pickle
+from pydantic import BaseModel
 
 
-@dataclass
-class Champion:
+class Champion(BaseModel):
     name: str
     traits: list
     price: int
@@ -33,10 +34,12 @@ for a in soup.find_all('a', href=True):
             price=int(price),
         ))
         x = a.select('div.m-1lk7whh')[0]['style']
-        link = x[x.find('(') + 1:x.find(')')]
+        link = x[x.find('(')+1:x.find(')')]
         urllib.request.urlretrieve(link, "Icons/" + link.split("/")[-1])
 
-data_pickled = open('data_pickle.txt', 'wb')
-pickle.dump(data, data_pickled)
-data_pickled.close()
+finalData = [champion.dict() for champion in data]
+
+with open('data.json', 'w') as f:
+    json.dump(finalData, f)
+
 

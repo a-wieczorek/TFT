@@ -1,13 +1,13 @@
 import json
-import pickle
 from dataclasses import dataclass
-from enum import Enum
 
 import uvicorn
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 from typing import List
+from pydantic import parse_obj_as
+
 
 @dataclass
 class Champion:
@@ -17,14 +17,15 @@ class Champion:
 
 
 app = FastAPI()
-p = open("data_pickle.txt", "rb")
-champions = pickle.load(p)
-p.close()
+
+with open('data.json', 'r') as f:
+    champions_json = json.load(f)
+champions = parse_obj_as(List[Champion], champions_json)
 
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["null"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -108,4 +109,4 @@ async def returnLists(request: Request):
     result['traitListPL'] = sorted([[translator[trait], trait] for trait in allTraits])
     return json.dumps(result)
 
-uvicorn.run(app, host='localhost', port=8000)
+uvicorn.run(app, host='localhost', port=1000)

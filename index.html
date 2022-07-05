@@ -53,9 +53,8 @@
         .lang{
             text-shadow: 0 0 5px black;
         }
-
-
     </style>
+    
     <script>
         var availableTraits = new Set()
         let allTraitsEN = []
@@ -172,7 +171,6 @@
             colorButtons()
         }
 
-
         function swap() {
             if (!availableTraits.has(this.id)) {
                 return
@@ -234,9 +232,9 @@
                 })
             }
         }
-
     </script>
 </head>
+    
 <body>
 <button class="lang" id="lang" value="ENG" onclick="changeLanguage()">Zmień język na polski</button>
     <div id="boksik" class="border border-dark">

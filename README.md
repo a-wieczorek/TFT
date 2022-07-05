@@ -66,5 +66,5 @@ Returns *JSON* containing data about existing traits in English and in Polish la
 ```
 
 ## Index.html
-Accessing the *HTML* file while running the project with *docker-compose* is possible under *localhost:3000/Index.html*
+Accessing the *HTML* file while running the project with *docker-compose* is possible under *localhost:3000/Index.html*.
 

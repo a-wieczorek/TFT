@@ -109,4 +109,5 @@ async def returnLists(request: Request):
     result['traitListPL'] = sorted([[translator[trait], trait] for trait in allTraits])
     return json.dumps(result)
 
-#uvicorn.run(app, host='localhost', port=8000)
+if __name__ == '__main__':
+    uvicorn.run(app, host='localhost', port=8000)

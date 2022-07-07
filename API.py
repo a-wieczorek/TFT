@@ -1,7 +1,7 @@
 import json
-from dataclasses import dataclass
-
 import uvicorn
+
+from dataclasses import dataclass
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -72,7 +72,7 @@ def get_with_all_traits(traits: List[str]) -> List[str]:
 
 
 @app.get("/", response_class=HTMLResponse)
-async def root(request: Request, traits=None):
+async def root(request: Request, traits: str = None) -> json:
     allTraits = []
     myDict = {}
     miniDicts = []
@@ -99,7 +99,7 @@ async def root(request: Request, traits=None):
 
 
 @app.get("/traitlists", response_class=HTMLResponse)
-async def returnLists(request: Request):
+async def return_trait_lists(request: Request) -> json:
     allTraits = []
     result = {}
     for k in champions:

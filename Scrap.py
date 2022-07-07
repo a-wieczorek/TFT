@@ -1,9 +1,7 @@
 import json
 import urllib
-from dataclasses import dataclass
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
-import pickle
 from pydantic import BaseModel
 
 
